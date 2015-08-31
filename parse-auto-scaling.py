@@ -1,37 +1,45 @@
-TIME_AND_LIMIT = {'00:00': 300,
-                  '01:15': 280,
-                  '01:30': 270,
-                  '02:00': 250,
-                  '02:30': 230,
-                  '03:00': 210,
-                  '03:30': 190,
-                  '04:00': 175,
-                  '04:30': 160,
-                  '05:00': 130,
-                  '09:00': 160,
-                  '09:30': 185,
-                  '10:00': 200,
-                  '14:00': 300,
-                  '14:30': 280,
-                  '15:00': 250,
-                  '19:00': 300}
+TIMEZONE = 'Asia/Taipei'
+
+TIME_AND_LIMIT = {'00:00': 320,
+                  '01:00': 300,
+                  '02:00': 280,
+                  '02:30': 260,
+                  '03:00': 240,
+                  '03:30': 220,
+                  '04:00': 200,
+                  '04:30': 175,
+                  '05:00': 150,
+                  '08:00': 160,
+                  '09:00': 190,
+                  '12:00': 210,
+                  '13:00': 220,
+                  '17:00': 270,
+                  '21:00': 280,
+                  '22:00': 290,
+                  '22:30': 300,
+                  '23:00': 320}
 
 ###########################################################################
 
 import getpass
+import pytz
 import requests
 import sched
 import time
 from datetime import datetime, timedelta
 from bs4 import BeautifulSoup
 
+def get_now():
+    return datetime.now(pytz.timezone(TIMEZONE))
+
+
 def get_limit(now):
     hour = now.hour
     minute = now.minute
-    
+
     closest_time_in_minute = 9999
     closest_limit = None
-    
+
     for t, l in TIME_AND_LIMIT.items():
         h, m = map(int, t.split(':'))
         d = (hour - h) * 60 + (minute - m)
@@ -44,9 +52,9 @@ def get_limit(now):
 
 def set_limit():
     global limit
-    
-    new_limit = get_limit(datetime.now())
-    
+
+    new_limit = get_limit(get_now())
+
     if new_limit and new_limit != limit:
         limit = new_limit
 
@@ -71,18 +79,18 @@ def set_limit():
                 print('ConnectionError. Retry... ' + retry)
                 time.sleep(1)
             else:
-                print(PARSE_APP_ID + ': ' + str(limit).rjust(3) + ' req/s (' + datetime.now().strftime('%Y-%m-%d %H:%M') + ')')
+                print(PARSE_APP_ID + ': ' + str(limit).rjust(3) + ' req/s (' + get_now().strftime('%Y-%m-%d %H:%M') + ')')
                 break
-                
+
     else:
-        print(PARSE_APP_ID + ': ---       (' + datetime.now().strftime('%Y-%m-%d %H:%M') + ')')
-    
+        print(PARSE_APP_ID + ': ---       (' + get_now().strftime('%Y-%m-%d %H:%M') + ')')
+
     next_minute = (datetime.now() + timedelta(minutes=1)).replace(second=0)
     sc.enterabs(time.mktime(next_minute.timetuple()), 1, set_limit)
 
 
 
-PARSE_APP_ID   = input('Parse App Id: ') 
+PARSE_APP_ID   = input('Parse App Id: ')
 PARSE_EMAIL    = input('Parse E-mail: ')
 PARSE_PASSWORD = getpass.getpass('Parse Password: ')
 

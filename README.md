@@ -4,11 +4,11 @@
 
 [Parse](https://parse.com/) requires you to manually adjust the request limit, but it's not an easy task especially in the middle of the night. If  the request limit of your app is regular at a specific time, this script could help you save time and money.
 
-### Before:
+#### Before:
 
 ![Before](https://raw.githubusercontent.com/iForests/parse-auto-scaling/master/images/before.png)
 
-### After:
+#### After:
 
 ![Before](https://raw.githubusercontent.com/iForests/parse-auto-scaling/master/images/after.png)
 

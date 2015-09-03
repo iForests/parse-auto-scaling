@@ -75,8 +75,11 @@ def set_limit():
                     token = soup.find('meta', {'name': 'csrf-token'})['content']
                     headers = {'X-CSRF-Token': token}
                     s.put('https://www.parse.com/plans/' + PARSE_APP_ID + '?new_limit=' + str(limit), headers=headers)
-            except ConnectionError:
-                print('ConnectionError. Retry... ' + retry)
+            except ConnectionError as err:
+                print('ConnectionError: ' + str(err) + ' - Retry... ' + retry)
+                time.sleep(1)
+            except TypeError as err:
+                print('TypeError: ' + str(err) + ' - Retry... ' + retry)
                 time.sleep(1)
             else:
                 print(PARSE_APP_ID + ': ' + str(limit).rjust(3) + ' req/s (' + get_now().strftime('%Y-%m-%d %H:%M') + ')')
